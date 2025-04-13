@@ -13,6 +13,7 @@ UUTHUB_ASC::UUTHUB_ASC()
 
 	PrimaryComponentTick.bCanEverTick = true;
 
+
 }
 
 
@@ -28,32 +29,33 @@ void UUTHUB_ASC::BeginPlay()
 void UUTHUB_ASC::InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor)
 {
 	Super::InitAbilityActorInfo(InOwnerActor, InAvatarActor);
-	
-
 	InitializeAttributesFromEffects();
 }
 
-FGameplayEffectSpec* UUTHUB_ASC::MakeSpec(const TSubclassOf<UGameplayEffect>& EffectClass,int InLevel) const
+void UUTHUB_ASC::AddAbilityFromClass(const TSubclassOf<UGameplayAbility>& InAbilityClass,const uint8& InInputID)
 {
-
-	FGameplayEffectContextHandle EffectContext=MakeEffectContext();
-	EffectContext.AddSourceObject(this);
-	return MakeOutgoingSpec(EffectClass,InLevel,EffectContext).Data.Get();
-
+	const FGameplayAbilitySpec Spec(InAbilityClass,1,InInputID,this);
+	GiveAbility(Spec);
+	
 }
 
 
 FActiveGameplayEffectHandle UUTHUB_ASC::ApplyEffectFromClassToTarget(const TSubclassOf<UGameplayEffect>& EffectClass)
 {
-	check(EffectClass)
-	return ApplyGameplayEffectSpecToTarget(*MakeSpec(EffectClass,1),this);
+	FGameplayEffectContextHandle EffectContext=MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+	return ApplyGameplayEffectSpecToTarget(*MakeOutgoingSpec(EffectClass,1,EffectContext).Data.Get(),this);
 
 }
 
 FActiveGameplayEffectHandle UUTHUB_ASC::ApplyEffectFromClassToSelf(const TSubclassOf<UGameplayEffect>& EffectClass)
 {
-	return ApplyGameplayEffectSpecToSelf(*MakeSpec(EffectClass,1));
+	FGameplayEffectContextHandle EffectContext=MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+	return ApplyGameplayEffectSpecToSelf(*MakeOutgoingSpec(EffectClass,1,EffectContext).Data.Get());
 }
+
+
 
 
 void UUTHUB_ASC::InitializeAttributesFromEffects()

@@ -19,8 +19,12 @@ class ATarea3GASCharacter : public ACharacter
 
 public:
 	ATarea3GASCharacter();
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable, Category="Attribute Delegates",meta=(AllowPrivateAccess=true))
+	void OnHealthChanged(float OldHealth, float NewHealth);
+	UFUNCTION(BlueprintCallable, Category="Attribute Delegates",meta=(AllowPrivateAccess=true))
+	void OnSpeedChanged(float OldSpeed, float NewSpeed);
 
+	virtual void BeginPlay() override;
 	
 	/** Returns TopDownCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetTopDownCameraComponent() const { return TopDownCameraComponent; }
@@ -32,12 +36,11 @@ private:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=CoreAttributes,meta=(AllowPrivateAccess=true))
 	UCoreAttributeSet* CoreAttributeSet;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Gameplay,meta=(AllowPrivateAccess=true))
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category=Gameplay,meta=(AllowPrivateAccess=true))
 	UGASDataComponent* GASDataComponent;
 
-	UPROPERTY(EditAnywhere,Category=Gameplay,meta=(AllowPrivateAccess=true))
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category=Gameplay,meta=(AllowPrivateAccess=true))
 	UUTHUB_ASC* ASC;
-	
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Gameplay,meta=(AllowPrivateAccess=true))
 	TSubclassOf<UGameplayEffect> SampleEffect;

@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "CoreAttributeSet.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, OldHealth, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSpeedChanged, float, OldSpeed, float, NewSpeed);
 
 
 #define ATTRIBUTE_ACCESSORS(ClassName,PropertyName)\
@@ -41,6 +43,12 @@ public:
 	UPROPERTY(BlueprintReadOnly,Category="Attributes|CommonSet") FGameplayAttributeData Speed;
 	ATTRIBUTE_ACCESSORS(UCoreAttributeSet,Speed);
 	// Called every frame
+	FOnHealthChanged OnHealthChanged;
+	FOnSpeedChanged OnSpeedChanged;
+
+protected:
+	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	
 
 };
 

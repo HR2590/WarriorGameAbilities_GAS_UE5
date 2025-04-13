@@ -3,13 +3,12 @@
 #include "Tarea3GASPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Tarea3GASCharacter.h"
 #include "Engine/World.h"
 #include "EnhancedInputComponent.h"
-#include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
+#include "UTHUB_ASC.h"
 #include "Engine/LocalPlayer.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -26,6 +25,51 @@ void ATarea3GASPlayerController::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+}
+
+void ATarea3GASPlayerController::StartedAbility(const FInputActionInstance& InputActionInstance)
+{
+	UGASDataComponent* DataComponent=GetPawn()->FindComponentByClass<UGASDataComponent>();
+	UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
+	
+	if(DataComponent && ASC&&DataComponent->InputAbilityMapping )
+	{
+		const UInputAction* Action = InputActionInstance.GetSourceAction();
+		for (auto [InputID,InputMap]:DataComponent->InputAbilityMapping->InputMap)
+		{
+			const UInputAction* InAction=InputActionInstance.GetSourceAction();
+			if(const auto ActionClass= InputMap.AbilityMap.Find(InAction))
+			{
+				const auto Spec=ASC->FindAbilitySpecFromClass(*ActionClass);
+				if(ASC->TryActivateAbilityByClass(*ActionClass))
+					ASC->AbilityLocalInputPressed(static_cast<uint8>(InputID));
+				
+					
+			}
+		}
+	}
+}
+
+void ATarea3GASPlayerController::CompletedAbility(const FInputActionInstance& InputActionInstance)
+{
+	UGASDataComponent* DataComponent=GetPawn()->FindComponentByClass<UGASDataComponent>();
+	UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
+	
+	if(DataComponent && ASC&&DataComponent->InputAbilityMapping )
+	{
+		const UInputAction* Action = InputActionInstance.GetSourceAction();
+		for (auto [InputID,InputMap]:DataComponent->InputAbilityMapping->InputMap)
+		{
+			const UInputAction* InAction=InputActionInstance.GetSourceAction();
+			if(const auto ActionClass= InputMap.AbilityMap.Find(InAction))
+			{
+				const auto Spec=ASC->FindAbilitySpecFromClass(*ActionClass);
+				
+				if(ASC->TryActivateAbilityByClass(*ActionClass))
+					ASC->AbilityLocalInputReleased(static_cast<uint8>(InputID));
+			}
+		}
+	}
 }
 
 void ATarea3GASPlayerController::SetupInputComponent()
@@ -53,7 +97,8 @@ void ATarea3GASPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Triggered, this, &ATarea3GASPlayerController::OnTouchTriggered);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Completed, this, &ATarea3GASPlayerController::OnTouchReleased);
 		EnhancedInputComponent->BindAction(SetDestinationTouchAction, ETriggerEvent::Canceled, this, &ATarea3GASPlayerController::OnTouchReleased);
-
+		
+		
 	}
 	else
 	{
@@ -124,3 +169,50 @@ void ATarea3GASPlayerController::OnTouchReleased()
 	bIsTouch = false;
 	OnSetDestinationReleased();
 }
+
+
+
+void ATarea3GASPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	UEnhancedInputComponent* EnhancedInputComponent=Cast<UEnhancedInputComponent>(InputComponent);
+	UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
+	if(EnhancedInputComponent&&ASC)
+	{
+		if(const UGASDataComponent* DataComponent=InPawn->FindComponentByClass<UGASDataComponent>())
+		{
+			if(DataComponent->InputAbilityMapping)
+			{
+				for (auto [InputID,InputMap]: DataComponent->InputAbilityMapping->InputMap)
+				{
+					for (auto [InputAction,AbilityClass] : InputMap.AbilityMap)
+					{
+						if (InputAction&&AbilityClass)
+						{
+							ASC->AddAbilityFromClass(AbilityClass,static_cast<uint8>(InputID));
+							
+							if(InputID==EAbilityInputID::Defend)
+							{
+								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
+								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Completed,this,&ThisClass::CompletedAbility);
+							}
+							else
+							{
+								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
+							}
+								
+						}
+							
+					}
+						
+				}
+			}
+				
+		}
+					
+				
+	}
+		
+}
+	
+

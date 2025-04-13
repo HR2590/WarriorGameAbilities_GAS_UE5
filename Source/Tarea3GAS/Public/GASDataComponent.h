@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CoreAttributeSet.h"
+#include "InputAbilityMapping.h"
 #include "Components/ActorComponent.h"
 #include "GASDataComponent.generated.h"
 
@@ -17,11 +17,12 @@ class TAREA3GAS_API UGASDataComponent : public UActorComponent
 
 public:
 	// Sets default values for this component's properties
-	UGASDataComponent();
+
 	
 	UPROPERTY(EditAnywhere,Category="Data",meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayEffect>> AttributeInitializers;
-	
+
 	UPROPERTY(EditAnywhere,Category="Data",meta=(AllowPrivateAccess=true))
-	TMap<FGameplayAttribute,TSubclassOf<UGameplayEffect>> AttributeEffectors;
+	UInputAbilityMapping* InputAbilityMapping;
+	
 };

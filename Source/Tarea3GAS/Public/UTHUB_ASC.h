@@ -15,17 +15,16 @@ class TAREA3GAS_API UUTHUB_ASC : public UAbilitySystemComponent
 public:
 	// Sets default values for this component's properties
 	UUTHUB_ASC();
-
+	void AddAbilityFromClass(const TSubclassOf<UGameplayAbility>& InAbilityClass,const uint8& InInputID);
+	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	//void InitializeAttributes(const AActor* InOwnerActor) const;
 	void InitializeAttributesFromEffects();
 
-	virtual void InitAbilityActorInfo(AActor* InOwnerActor, AActor* InAvatarActor) override;
-	FGameplayEffectSpec* MakeSpec(const TSubclassOf<UGameplayEffect>& EffectClass,int InLevel) const;
+	
 
-	UPROPERTY(EditAnywhere,Category=GameEffects,meta=(AllowPrivateAccess)) FGameplayTag TagClass;
 
 
 public:
@@ -35,8 +34,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="GameEffects",meta=(AllowPrivateAccess=true))
 	FActiveGameplayEffectHandle ApplyEffectFromClassToSelf(const TSubclassOf<UGameplayEffect>& EffectClass);
-	
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=GameplayTag,meta=(AllowPrivateAccess=true))
+	FGameplayTag ClassTag;
+	
 	template <typename AttrSetType>
 	AttrSetType* GetAttributeSetFromOwner() const;
 	

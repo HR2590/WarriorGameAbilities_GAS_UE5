@@ -4,10 +4,4 @@
 #include "GASDataComponent.h"
 
 
-// Sets default values for this component's properties
-UGASDataComponent::UGASDataComponent()
-{
-	PrimaryComponentTick.bCanEverTick = true;
-	
-}
 

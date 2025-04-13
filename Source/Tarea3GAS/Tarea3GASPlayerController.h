@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
+#include "Abilities/GameplayAbility.h"
 #include "Templates/SubclassOf.h"
 #include "GameFramework/PlayerController.h"
 #include "Tarea3GASPlayerController.generated.h"
+
 
 /** Forward declaration to improve compiling times */
 class UNiagaraSystem;
@@ -46,6 +49,7 @@ protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 
+	
 	virtual void SetupInputComponent() override;
 	
 	// To add mapping context
@@ -57,6 +61,9 @@ protected:
 	void OnSetDestinationReleased();
 	void OnTouchTriggered();
 	void OnTouchReleased();
+	void StartedAbility(const FInputActionInstance& InputActionInstance);
+	void CompletedAbility(const FInputActionInstance& InputActionInstance);
+	virtual void OnPossess(APawn* InPawn) override;
 
 private:
 	FVector CachedDestination;

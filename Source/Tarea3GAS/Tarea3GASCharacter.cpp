@@ -1,8 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Tarea3GASCharacter.h"
-
-
 #include "UTHUB_ASC.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Camera/CameraComponent.h"
@@ -12,7 +10,6 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Materials/Material.h"
 #include "Engine/World.h"
-#include "GameFramework/PlayerState.h"
 
 ATarea3GASCharacter::ATarea3GASCharacter()
 {
@@ -54,9 +51,31 @@ ATarea3GASCharacter::ATarea3GASCharacter()
 
 }
 
+void ATarea3GASCharacter::OnHealthChanged(float OldHealth, float NewHealth)
+{
+	if (NewHealth<=0)
+	{
+		Destroy();
+	}
+}
+
+void ATarea3GASCharacter::OnSpeedChanged(float OldSpeed, float NewSpeed)
+{
+	GetCharacterMovement()->MaxWalkSpeed = NewSpeed;
+}
+
+
 void ATarea3GASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if(ensure(CoreAttributeSet))
+	{
+		CoreAttributeSet->OnHealthChanged.AddDynamic(this, &ATarea3GASCharacter::OnHealthChanged);
+		CoreAttributeSet->OnSpeedChanged.AddDynamic(this, &ATarea3GASCharacter::OnSpeedChanged);
+	    
+	}
+	
 
 }
 
