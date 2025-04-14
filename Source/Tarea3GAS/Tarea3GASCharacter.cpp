@@ -53,11 +53,38 @@ ATarea3GASCharacter::ATarea3GASCharacter()
 
 void ATarea3GASCharacter::OnHealthChanged(float OldHealth, float NewHealth)
 {
-	if (NewHealth<=0)
+	
+	
+	if (FMath::IsNearlyZero(NewHealth)||FMath::IsNegativeOrNegativeZero(NewHealth))
 	{
+		
+	
+		if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+		{
+			
+			MoveComp->StopMovementImmediately();
+			MoveComp->DisableMovement();
+			MoveComp->Deactivate();
+			StopJumping();
+
+		}
+		
+		ASC->CancelAllAbilities();
+		ASC->ClearAllAbilities();
+		ASC->ClearAllAbilitiesWithInputID();
+		
+		for (auto Delegate :CoreAttributeSet->OnAttributeChanged)
+		{
+			Delegate.Value.RemoveAll(this);
+		}
+		
 		Destroy();
 	}
+		
+	
 }
+
+
 
 void ATarea3GASCharacter::OnSpeedChanged(float OldSpeed, float NewSpeed)
 {
@@ -69,15 +96,27 @@ void ATarea3GASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if(ensure(CoreAttributeSet))
+	if(ensure(CoreAttributeSet)&&!CoreAttributeSet->OnAttributeChanged.IsEmpty())
 	{
-		CoreAttributeSet->OnHealthChanged.AddDynamic(this, &ATarea3GASCharacter::OnHealthChanged);
-		CoreAttributeSet->OnSpeedChanged.AddDynamic(this, &ATarea3GASCharacter::OnSpeedChanged);
-	    
+	
+		if(auto Attribute=CoreAttributeSet->OnAttributeChanged.Find(CoreAttributeSet->GetHealthAttribute()))
+		{
+			Attribute->AddDynamic(this,&ATarea3GASCharacter::OnHealthChanged);
+		}
+		if(auto Attribute=CoreAttributeSet->OnAttributeChanged.Find(CoreAttributeSet->GetSpeedAttribute()))
+		{
+			Attribute->AddDynamic(this,&ATarea3GASCharacter::OnSpeedChanged);
+		}
+		
 	}
 	
 
 }
+
+
+
+
+
 
 
 

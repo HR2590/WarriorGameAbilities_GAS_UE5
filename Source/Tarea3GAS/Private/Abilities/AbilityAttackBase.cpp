@@ -13,6 +13,7 @@ void UAbilityAttackBase::InputPressed(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
+	
 	AActor* Avatar=ActorInfo->AvatarActor.Get();
 	check(Avatar);
 	if(const auto CollisionEvaluator=Avatar->FindComponentByClass<UDamageCollisionEvaluator>())
@@ -21,9 +22,13 @@ void UAbilityAttackBase::InputPressed(const FGameplayAbilitySpecHandle Handle,
 		CollisionEvaluator->OnComponentBeginOverlap.AddDynamic(this,&ThisClass::ApplyDamageEffects);
 	}
 	
-	const auto PlayMontage= UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,NAME_None,MontageToPlay);
+	PlayMontage= UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,NAME_None,MontageToPlay);
 	PlayMontage->OnCompleted.AddDynamic(this,&ThisClass::OnAnimationFinished);
+	PlayMontage->OnCancelled.AddDynamic(this,&ThisClass::OnAnimationFinished);
+	PlayMontage->OnInterrupted.AddDynamic(this,&ThisClass::OnAnimationFinished);
 	PlayMontage->Activate();
+	
+
 
 }
 
@@ -33,14 +38,6 @@ void UAbilityAttackBase::InputReleased(const FGameplayAbilitySpecHandle Handle,
 	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
 	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,false,false);
 	
-}
-
-void UAbilityAttackBase::CancelAbility(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
-	bool bReplicateCancelAbility)
-{
-	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
-	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,false,false);
 }
 
 
@@ -66,6 +63,10 @@ void UAbilityAttackBase::ApplyDamageEffects(UPrimitiveComponent* OverlappedCompo
 
 void UAbilityAttackBase::OnAnimationFinished()
 {
+	PlayMontage->OnCancelled.Clear();
+	PlayMontage->OnInterrupted.Clear();
+	PlayMontage->OnCompleted.Clear();
+	PlayMontage->EndTask();
 	if(const auto CollisionEvaluator=GetAvatarActorFromActorInfo()->FindComponentByClass<UDamageCollisionEvaluator>())
 	{
 		CollisionEvaluator->OnComponentBeginOverlap.RemoveDynamic(this, &ThisClass::ApplyDamageEffects);

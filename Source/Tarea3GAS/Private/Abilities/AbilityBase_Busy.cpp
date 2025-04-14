@@ -3,20 +3,25 @@
 
 #include "AbilityBase_Busy.h"
 
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+
+
 UAbilityBase_Busy::UAbilityBase_Busy()
 {
-	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Character.IsBusy")));
-	ActivationOwnedTags.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Character.IsBusy")));
 }
 
-void UAbilityBase_Busy::InputPressed(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+void UAbilityBase_Busy::CancelAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+	bool bReplicateCancelAbility)
 {
-	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
-}
-
-void UAbilityBase_Busy::InputReleased(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
-{
-	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
+	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
+ 	if(PlayMontage)
+	{
+		PlayMontage->OnCancelled.Clear();
+		PlayMontage->OnInterrupted.Clear();
+		PlayMontage->OnCompleted.Clear();
+ 		PlayMontage->OnBlendOut.Clear();
+		PlayMontage->EndTask();
+	}
+	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,false,false);
 }

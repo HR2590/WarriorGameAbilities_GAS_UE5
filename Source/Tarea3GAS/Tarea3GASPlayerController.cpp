@@ -29,6 +29,7 @@ void ATarea3GASPlayerController::BeginPlay()
 
 void ATarea3GASPlayerController::StartedAbility(const FInputActionInstance& InputActionInstance)
 {
+	if(!IsValid(GetPawn())||GetPawn()->IsPendingKillPending()) return;
 	UGASDataComponent* DataComponent=GetPawn()->FindComponentByClass<UGASDataComponent>();
 	UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
 	
@@ -52,6 +53,7 @@ void ATarea3GASPlayerController::StartedAbility(const FInputActionInstance& Inpu
 
 void ATarea3GASPlayerController::CompletedAbility(const FInputActionInstance& InputActionInstance)
 {
+	if(!IsValid(GetPawn())||GetPawn()->IsPendingKillPending()) return;
 	UGASDataComponent* DataComponent=GetPawn()->FindComponentByClass<UGASDataComponent>();
 	UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
 	
@@ -176,43 +178,54 @@ void ATarea3GASPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 	UEnhancedInputComponent* EnhancedInputComponent=Cast<UEnhancedInputComponent>(InputComponent);
-	UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
-	if(EnhancedInputComponent&&ASC)
-	{
-		if(const UGASDataComponent* DataComponent=InPawn->FindComponentByClass<UGASDataComponent>())
+	if(!IsValid(GetPawn())||GetPawn()->IsPendingKillPending()) return;
+	
+		UUTHUB_ASC* ASC=GetPawn()->FindComponentByClass<UUTHUB_ASC>();
+		if(EnhancedInputComponent&&ASC)
 		{
-			if(DataComponent->InputAbilityMapping)
+			if(const UGASDataComponent* DataComponent=InPawn->FindComponentByClass<UGASDataComponent>())
 			{
-				for (auto [InputID,InputMap]: DataComponent->InputAbilityMapping->InputMap)
+				if(DataComponent->InputAbilityMapping)
 				{
-					for (auto [InputAction,AbilityClass] : InputMap.AbilityMap)
+					for (auto [InputID,InputMap]: DataComponent->InputAbilityMapping->InputMap)
 					{
-						if (InputAction&&AbilityClass)
+						for (auto [InputAction,AbilityClass] : InputMap.AbilityMap)
 						{
-							ASC->AddAbilityFromClass(AbilityClass,static_cast<uint8>(InputID));
+							if (InputAction&&AbilityClass)
+							{
+								ASC->AddAbilityFromClass(AbilityClass,static_cast<uint8>(InputID));
 							
-							if(InputID==EAbilityInputID::Defend)
-							{
-								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
-								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Completed,this,&ThisClass::CompletedAbility);
-							}
-							else
-							{
-								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
-							}
+								if(InputID==EAbilityInputID::Defend)
+								{
+									EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
+									EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Completed,this,&ThisClass::CompletedAbility);
+								}
+								if(InputID==EAbilityInputID::Jump)
+								{
+									EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Started,this,&ThisClass::StartedAbility);
+								}
+								else
+								{
+									EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
+								}
 								
-						}
+							}
 							
-					}
+						}
 						
+					}
 				}
-			}
 				
-		}
+			}
 					
 				
-	}
+		}
+	
+	
 		
 }
+
+
+
 	
 

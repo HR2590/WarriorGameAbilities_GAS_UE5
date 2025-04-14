@@ -6,8 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "CoreAttributeSet.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, OldHealth, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSpeedChanged, float, OldSpeed, float, NewSpeed);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnAttributeChanged, float, OldValue, float, NewValue);
 
 
 #define ATTRIBUTE_ACCESSORS(ClassName,PropertyName)\
@@ -38,17 +38,21 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly,Category="Attributes|CommonSet") FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCoreAttributeSet,Health);
+	UPROPERTY(BlueprintReadOnly,Category="Attributes|CommonSet") FGameplayAttributeData MaxHealth;
+	ATTRIBUTE_ACCESSORS(UCoreAttributeSet,MaxHealth);
 	UPROPERTY(BlueprintReadOnly,Category="Attributes|CommonSet") FGameplayAttributeData Damage;
 	ATTRIBUTE_ACCESSORS(UCoreAttributeSet,Damage);
 	UPROPERTY(BlueprintReadOnly,Category="Attributes|CommonSet") FGameplayAttributeData Speed;
 	ATTRIBUTE_ACCESSORS(UCoreAttributeSet,Speed);
 	// Called every frame
-	FOnHealthChanged OnHealthChanged;
-	FOnSpeedChanged OnSpeedChanged;
+	TMap<FGameplayAttribute,FOnAttributeChanged> OnAttributeChanged;
+
+
 
 protected:
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	
-
+	
 };
 

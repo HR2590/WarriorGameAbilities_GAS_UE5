@@ -6,15 +6,13 @@
 
 void UAbilityDodge::OnAnimationFinished()
 {
+	PlayMontage->OnCancelled.Clear();
+	PlayMontage->OnInterrupted.Clear();
+	PlayMontage->OnCompleted.Clear();
+	PlayMontage->EndTask();
 	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,false,false);
 }
 
-void UAbilityDodge::CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
-	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility)
-{
-	Super::CancelAbility(Handle, ActorInfo, ActivationInfo, bReplicateCancelAbility);
-	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,false,false);
-}
 
 void UAbilityDodge::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
 	const FGameplayAbilityActivationInfo ActivationInfo)
@@ -23,7 +21,7 @@ void UAbilityDodge::InputPressed(const FGameplayAbilitySpecHandle Handle, const 
 	
 	AActor* Avatar=ActorInfo->AvatarActor.Get();
 	check(Avatar);
-	const auto PlayMontage= UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,NAME_None,MontageToPlay,1.0f,NAME_None,true);
+	PlayMontage= UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,NAME_None,MontageToPlay);
 	PlayMontage->OnCompleted.AddDynamic(this,&ThisClass::OnAnimationFinished);
 	PlayMontage->OnCancelled.AddDynamic(this,&ThisClass::OnAnimationFinished);
 	PlayMontage->OnInterrupted.AddDynamic(this,&ThisClass::OnAnimationFinished);

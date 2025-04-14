@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "AbilityBase_Busy.h"
-#include "AbilityDefenseBase.generated.h"
+#include "AbilityJump.generated.h"
 
-
+/**
+ * 
+ */
 UCLASS()
-class TAREA3GAS_API UAbilityDefenseBase : public UAbilityBase_Busy
+class TAREA3GAS_API UAbilityJump : public UAbilityBase_Busy
 {
 	GENERATED_BODY()
 protected:
-	UFUNCTION()void OnAnimationFinished();
+	
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 private:
-	FActiveGameplayEffectHandle AbilitySpecHandle;
-	
+	UFUNCTION()void OnAnimationFinished();
 	
 };
