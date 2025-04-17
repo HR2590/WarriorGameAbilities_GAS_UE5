@@ -68,10 +68,14 @@ void ATarea3GASCharacter::OnHealthChanged(float OldHealth, float NewHealth)
 			StopJumping();
 
 		}
+
+		if(ASC)
+		{
+			ASC->CancelAllAbilities();
+			ASC->ClearAllAbilities();
+			ASC->ClearAllAbilitiesWithInputID();
+		}
 		
-		ASC->CancelAllAbilities();
-		ASC->ClearAllAbilities();
-		ASC->ClearAllAbilitiesWithInputID();
 		
 		for (auto Delegate :CoreAttributeSet->OnAttributeChanged)
 		{

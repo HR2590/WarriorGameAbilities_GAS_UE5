@@ -8,6 +8,7 @@ USTRUCT(BlueprintType,Blueprintable)
 struct FAbilityInputMap
 {
 	GENERATED_BODY()
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Mappings)
 	TMap<UInputAction*,TSubclassOf<UGameplayAbility>> AbilityMap;
 	

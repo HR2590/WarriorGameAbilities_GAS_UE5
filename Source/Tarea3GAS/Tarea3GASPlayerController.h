@@ -47,7 +47,7 @@ public:
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
-
+	void OnCancelLockOn();
 	
 	virtual void SetupInputComponent() override;
 	

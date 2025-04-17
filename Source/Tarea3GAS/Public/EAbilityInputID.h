@@ -11,6 +11,7 @@ enum class EAbilityInputID : uint8
 	Dodge		UMETA(DisplayName = "Dodge"),
 	Celebrate	UMETA(DisplayName = "Celebrate"),
 	Target      UMETA(DisplayName = "Target"),
+	CancelTarget  UMETA(DisplayName = "CancelTarget"),
 	Jump		UMETA(DisplayName = "Jump"),
 
 };

@@ -23,8 +23,6 @@ protected:
 	//void InitializeAttributes(const AActor* InOwnerActor) const;
 	void InitializeAttributesFromEffects();
 
-	
-
 
 
 public:

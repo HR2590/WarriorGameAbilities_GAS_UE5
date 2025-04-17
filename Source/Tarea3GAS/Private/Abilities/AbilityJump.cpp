@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AbilityJump.h"
+#include "Abilities/AbilityJump.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "GameFramework/Character.h"
 
@@ -12,7 +12,7 @@ void UAbilityJump::InputPressed(const FGameplayAbilitySpecHandle Handle, const F
 	
 	AActor* Avatar=GetAvatarActorFromActorInfo();
 	check(Avatar);
-	if(PlayMontage)
+	if(MontageToPlay)
 	{
 		PlayMontage= UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,NAME_None,MontageToPlay);
 		PlayMontage->OnCompleted.AddDynamic(this,&ThisClass::OnAnimationFinished);

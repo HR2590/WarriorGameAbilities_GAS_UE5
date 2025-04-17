@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Interactable.generated.h"
 
@@ -36,7 +35,5 @@ private:
 
 	UPROPERTY(EditAnywhere,Category=Gameplay,meta=(AllowPrivateAccess=true))
 	UUTHUB_ASC* ASC;
-
-
-
+	
 };

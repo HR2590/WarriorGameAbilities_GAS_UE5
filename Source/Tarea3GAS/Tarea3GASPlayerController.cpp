@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Tarea3GASPlayerController.h"
+
+#include "Abilities//AbilityTargetEnemy.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "NiagaraFunctionLibrary.h"
@@ -70,6 +72,19 @@ void ATarea3GASPlayerController::CompletedAbility(const FInputActionInstance& In
 				if(ASC->TryActivateAbilityByClass(*ActionClass))
 					ASC->AbilityLocalInputReleased(static_cast<uint8>(InputID));
 			}
+		}
+	}
+}
+
+void ATarea3GASPlayerController::OnCancelLockOn()
+{
+	UAbilitySystemComponent* ASC = GetPawn()->FindComponentByClass<UAbilitySystemComponent>();
+	if (!ASC) return;
+	for (const FGameplayAbilitySpec& Spec : ASC->GetActivatableAbilities())
+	{
+		if (Spec.Ability && Spec.Ability->GetClass()->IsChildOf(UAbilityTargetEnemy::StaticClass()))
+		{
+			ASC->CancelAbility(Spec.Ability);
 		}
 	}
 }
@@ -208,10 +223,15 @@ void ATarea3GASPlayerController::OnPossess(APawn* InPawn)
 								{
 									EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Triggered,this,&ThisClass::StartedAbility);
 								}
+						
 								
 							}
-							
+							if (InputID==EAbilityInputID::CancelTarget)
+							{
+								EnhancedInputComponent->BindAction(InputAction,ETriggerEvent::Started,this,&ThisClass::OnCancelLockOn);
+							}
 						}
+					
 						
 					}
 				}

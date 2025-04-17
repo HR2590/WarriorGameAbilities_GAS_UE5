@@ -16,8 +16,6 @@ class TAREA3GAS_API UGASDataComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
-
 	
 	UPROPERTY(EditAnywhere,Category="Data",meta=(AllowPrivateAccess=true))
 	TArray<TSubclassOf<class UGameplayEffect>> AttributeInitializers;

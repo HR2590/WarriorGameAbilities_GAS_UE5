@@ -15,17 +15,19 @@ class TAREA3GAS_API UAbilityAttackBase : public UAbilityBase_Busy
 	GENERATED_BODY()
 protected:
 	
-	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
-	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
-private:
+	virtual void InputPressed(
+		const FGameplayAbilitySpecHandle Handle,
+		const FGameplayAbilityActorInfo* ActorInfo,
+		const FGameplayAbilityActivationInfo ActivationInfo) override;
 	
-	UFUNCTION()
+	UFUNCTION(Blueprintable,BlueprintCallable,Category="Abilities|ApplyDamageEffect")
 	void ApplyDamageEffects(
 		UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep,
 		const FHitResult& SweepResult);
 	
-	UFUNCTION()void OnAnimationFinished();
+	UFUNCTION(Blueprintable,BlueprintCallable,Category="Abilities|OnAnimationFinished")
+	void OnAnimationFinished();
 };
 
 

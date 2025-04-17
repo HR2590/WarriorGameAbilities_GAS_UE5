@@ -11,16 +11,20 @@ UCLASS()
 class TAREA3GAS_API UAbilityBase_Busy : public UGameplayAbility
 {
 	GENERATED_BODY()
-public:
-	UAbilityBase_Busy();
+	
+protected:
 	UPROPERTY(EditAnywhere,Category=GameEffect,meta=(AllowPrivateAccess=true))
 	TSubclassOf<UGameplayEffect> GameEffect;
-protected:
+	
 	UPROPERTY()
 	UAbilityTask_PlayMontageAndWait* PlayMontage;
-	UPROPERTY(EditAnywhere,Category=Attacks,meta=(AllowPrivateAccess=true))
+	
+	UPROPERTY(EditAnywhere,Category=AbilityTask,meta=(AllowPrivateAccess=true))
 	UAnimMontage* MontageToPlay;
-
+	
+	UFUNCTION(Blueprintable,BlueprintCallable,Category="Abilities|EndAnimationTask")
+	void EndPlayAnimTask() const;
+	
 	virtual void CancelAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateCancelAbility) override;
 	
 };

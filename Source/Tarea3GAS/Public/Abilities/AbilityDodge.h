@@ -4,20 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "AbilityBase_Busy.h"
-#include "AbilityCelebrate.generated.h"
+#include "AbilityDodge.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class TAREA3GAS_API UAbilityCelebrate : public UAbilityBase_Busy
+class TAREA3GAS_API UAbilityDodge : public UAbilityBase_Busy
 {
 	GENERATED_BODY()
+
 protected:
-	UFUNCTION()void OnAnimationFinished();
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Abilities")
+	float DodgeStrength = 3000.f;
+	
+	UFUNCTION(Blueprintable,BlueprintCallable,Category="Abilities|OnAnimationFinished")
+	void OnAnimationFinished();
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
-private:
-
 	
 };

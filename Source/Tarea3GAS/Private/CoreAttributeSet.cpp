@@ -2,7 +2,6 @@
 
 
 #include "CoreAttributeSet.h"
-
 #include "GameplayEffectExtension.h"
 
 UCoreAttributeSet::UCoreAttributeSet()

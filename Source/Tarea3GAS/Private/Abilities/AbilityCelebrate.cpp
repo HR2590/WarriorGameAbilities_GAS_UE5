@@ -1,16 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "AbilityCelebrate.h"
-
+#include "Abilities/AbilityCelebrate.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 
 void UAbilityCelebrate::OnAnimationFinished()
 {
-	PlayMontage->OnCancelled.Clear();
-	PlayMontage->OnInterrupted.Clear();
-	PlayMontage->OnCompleted.Clear();
-	PlayMontage->EndTask();
+	EndPlayAnimTask();
 	EndAbility(CurrentSpecHandle,CurrentActorInfo,CurrentActivationInfo,false,false);
 }
 
@@ -22,6 +17,7 @@ void UAbilityCelebrate::InputPressed(const FGameplayAbilitySpecHandle Handle,
 	
 	AActor* Avatar=ActorInfo->AvatarActor.Get();
 	check(Avatar);
+	
 	if(MontageToPlay)
 	{
 		PlayMontage= UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,NAME_None,MontageToPlay);

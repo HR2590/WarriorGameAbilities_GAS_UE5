@@ -12,8 +12,7 @@ UUTHUB_ASC::UUTHUB_ASC()
 {
 
 	PrimaryComponentTick.bCanEverTick = true;
-
-
+	
 }
 
 
