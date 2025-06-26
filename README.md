@@ -1,9 +1,11 @@
+Full Warrior Gameplay Abilities using GAS in Unreal Engine.
+
 Controls:
-Abrir Mapa Topdown, 
-Dejar Presionado Click Izquierdo- movimiento
+Open Map Topdown, 
+Press Left Click- Movement
 Middle click on enemy- Target Enemy
-click Derecho-Ataque ligero
-R-Defender
+Right Click-Light Attack
+R-Defend
 E-Dodge
 Space-Jump
 G-Celebration
